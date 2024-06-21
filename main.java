@@ -1,27 +1,46 @@
 import java.util.Random;
+import java.util.Scanner;
 
-class Solver {  
+class Solver {
     public static void main(String args[]){
-        System.out.println("Hello Java");
-
+        System.out.println("Let's play 2048");
         TwentyFortyEight game = new TwentyFortyEight();
         game.print();
-        System.out.println();
+
+        // Solver.playInteractive(game);
+        Solver.playAlgorithm(game);
+    }
+
+    public static void playAlgorithm(TwentyFortyEight game) {
         game.right();
         game.print();
-        System.out.println();
-        game.left();
-        game.print();
-        System.out.println();
-        game.right();
-        game.print();
-        System.out.println();
-        game.up();
-        game.print();
-        System.out.println();
-        game.down();
-        game.print();
-        System.out.println();
+
+        // etc
+
+        System.out.format("Did my algorithm win? %b\n", game.won());
+    }
+
+    public static void playInteractive(TwentyFortyEight game) {
+        System.out.println("Up=1, Down=2, Left=3, Right=4. Enter to confirm.");
+
+        int num = -1;
+        Scanner keyboard = new Scanner(System.in);
+        while (true) {
+            num = keyboard.nextInt();
+            if (num == 1) {
+                game.up();
+                game.print();
+            } else if (num == 2) {
+                game.down();
+                game.print();
+            } else if (num == 3) {
+                game.left();
+                game.print();
+            } else if (num == 4) {
+                game.right();
+                game.print();
+            }
+        }
     }
 }
 
@@ -49,10 +68,61 @@ class TwentyFortyEight {
     }
 
     public void print() {
-        System.out.format("[%d, %d, %d, %d]\n[%d, %d, %d, %d]\n[%d, %d, %d, %d]\n[%d, %d, %d, %d]\n", positions[0][0], positions[0][1], positions[0][2], positions[0][3], positions[1][0], positions[1][1], positions[1][2], positions[1][3], positions[2][0], positions[2][1], positions[2][2], positions[2][3], positions[3][0], positions[3][1], positions[3][2], positions[3][3]);
+        System.out.format("------------\n[%d, %d, %d, %d]\n[%d, %d, %d, %d]\n[%d, %d, %d, %d]\n[%d, %d, %d, %d]\n", positions[0][0], positions[0][1], positions[0][2], positions[0][3], positions[1][0], positions[1][1], positions[1][2], positions[1][3], positions[2][0], positions[2][1], positions[2][2], positions[2][3], positions[3][0], positions[3][1], positions[3][2], positions[3][3]);
     }
 
-    public void right() {
+    public boolean won() {
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
+                if (positions[y][x] >= 2048) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // TODO(jean)
+    public int score() {
+        return -1;
+    }
+
+    // TODO(jean): Use this at the end of move functions. Also the move
+    // functions need to add another 2 every time.
+    private boolean gameOver() {
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 4; x++) {
+                if (positions[y][x] == 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Don't call this if you don't have a 0 on the board!
+    private void addNewNumber() {
+        Random rand = new Random();
+        int x = rand.nextInt(3);
+        int y = rand.nextInt(3);
+        int i = 0; // Break-glass counter.
+        
+        // Make sure space is not taken already.
+        while (positions[y][x] != 0 && i != 1000) {
+            x = rand.nextInt(3);
+            y = rand.nextInt(3);
+            i++;
+        }
+
+        if (i == 1000) {
+            System.out.println("Couldn't find a place on the board to put a new number. This should not happen. Bug in code.");
+            System.exit(1);
+        }
+        positions[y][x] = 2;
+    }
+
+    // Returns true if game is still active, false if it ended.
+    public boolean right() {
         for (int y = 0; y < 4; y++) {
             // first, move everything right
             if (positions[y][3] == 0) {
@@ -100,9 +170,15 @@ class TwentyFortyEight {
                 positions[y][0] = 0;
             }
         }
+        if (gameOver()) {
+            return false;
+        }
+        addNewNumber();
+        return gameOver();
     }
 
-    public void left() {
+    // Returns true if game is still active, false if it ended.
+    public boolean left() {
         for (int y = 0; y < 4; y++) {
             // first, move everything left
             if (positions[y][0] == 0) {
@@ -150,9 +226,15 @@ class TwentyFortyEight {
                 positions[y][3] = 0;
             }
         }
+        if (gameOver()) {
+            return false;
+        }
+        addNewNumber();
+        return gameOver();
     }
 
-    public void up() {
+    // Returns true if game is still active, false if it ended.
+    public boolean up() {
         for (int x = 0; x < 4; x++) {
             // first, move everything up
             if (positions[0][x] == 0) {
@@ -200,9 +282,15 @@ class TwentyFortyEight {
                 positions[3][x] = 0;
             }
         }
+        if (gameOver()) {
+            return false;
+        }
+        addNewNumber();
+        return gameOver();
     }
 
-    public void down() {
+    // Returns true if game is still active, false if it ended.
+    public boolean down() {
         for (int x = 0; x < 4; x++) {
             // first, move everything down
             if (positions[3][x] == 0) {
@@ -250,6 +338,11 @@ class TwentyFortyEight {
                 positions[0][x] = 0;
             }
         }
+        if (gameOver()) {
+            return false;
+        }
+        addNewNumber();
+        return gameOver();
     }
 
     private int positions[][];
