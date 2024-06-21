@@ -53,14 +53,14 @@ class TwentyFortyEight {
         positions[3] = new int[4];
 
         Random rand = new Random();
-        int x1 = rand.nextInt(3);
-        int y1 = rand.nextInt(3);
+        int x1 = rand.nextInt(4);
+        int y1 = rand.nextInt(4);
         int x2 = x1;
         int y2 = y1;
 
         while (x1 == x2 && y1 == y2) {
-            x2 = rand.nextInt(3);
-            y2 = rand.nextInt(3);
+            x2 = rand.nextInt(4);
+            y2 = rand.nextInt(4);
         }
 
         positions[y1][x1] = 2;
@@ -103,14 +103,14 @@ class TwentyFortyEight {
     // Don't call this if you don't have a 0 on the board!
     private void addNewNumber() {
         Random rand = new Random();
-        int x = rand.nextInt(3);
-        int y = rand.nextInt(3);
+        int x = rand.nextInt(4);
+        int y = rand.nextInt(4);
         int i = 0; // Break-glass counter.
         
         // Make sure space is not taken already.
         while (positions[y][x] != 0 && i != 1000) {
-            x = rand.nextInt(3);
-            y = rand.nextInt(3);
+            x = rand.nextInt(4);
+            y = rand.nextInt(4);
             i++;
         }
 
@@ -118,7 +118,9 @@ class TwentyFortyEight {
             System.out.println("Couldn't find a place on the board to put a new number. This should not happen. Bug in code.");
             System.exit(1);
         }
-        positions[y][x] = 2;
+
+        // Put either a 2 or a 4 on the board.
+        positions[y][x] = rand.nextInt(2) == 0 ? 2 : 4;
     }
 
     // Returns true if game is still active, false if it ended.
