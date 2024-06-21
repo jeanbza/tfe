@@ -12,8 +12,9 @@ class Solver {
     }
 
     public static void playAlgorithm(TwentyFortyEight game) {
-        game.right();
+        boolean gameOver = game.right();
         game.print();
+        System.out.format("Is the game over? %b\n", gameOver);
 
         // etc
 
